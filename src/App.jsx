@@ -418,11 +418,13 @@ export default function App() {
             </button>
           </div>
 
-          <form className="auth-form" onSubmit={handleAuthSubmit}>
+          <form className="auth-form" onSubmit={handleAuthSubmit} autoComplete="off">
             <label htmlFor="email">Email</label>
             <input
               id="email"
               type="email"
+              name="auth_email"
+              autoComplete="off"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               required
@@ -432,6 +434,8 @@ export default function App() {
             <input
               id="password"
               type="password"
+              name="auth_password"
+              autoComplete="new-password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               minLength={6}
@@ -525,13 +529,15 @@ export default function App() {
 
       {gameOver && scoreLookupDone && !scoreRecordId && !scoreSubmitted ? (
         <div className="popup-overlay" role="dialog" aria-modal="true" aria-label="Save score">
-          <form className="popup-card" onSubmit={handleSubmitScore}>
+          <form className="popup-card" onSubmit={handleSubmitScore} autoComplete="off">
             <h2>Save Score</h2>
             <p>Enter your nickname to save your result.</p>
             <label htmlFor="score-name">Nickname</label>
             <input
               id="score-name"
               type="text"
+              name="score_nickname"
+              autoComplete="off"
               value={scoreName}
               onChange={(event) => setScoreName(event.target.value)}
               disabled={scoreSubmitting}
@@ -582,6 +588,5 @@ export default function App() {
     </main>
   );
 }
-
 
 
