@@ -262,10 +262,11 @@ export default function App() {
   };
 
   const handleLogout = async () => {
-    if (!supabase) {
+    if (!supabase || !session?.user?.id) {
       return;
     }
 
+    await saveProgressOnLogout();
     await supabase.auth.signOut();
     handleReset();
     setAuthMessage("");
@@ -275,6 +276,46 @@ export default function App() {
     setRankingOpen(false);
     setRankingRows([]);
     setRankingMessage("");
+  };
+
+  const saveProgressOnLogout = async () => {
+    if (!supabase || !session?.user?.id) {
+      return;
+    }
+
+    const currentLevel = level;
+
+    if (scoreRecordId) {
+      const { error } = await supabase
+        .from("score")
+        .update({ level: currentLevel })
+        .eq("id", scoreRecordId);
+
+      if (!error) {
+        setScoreRecordLevel(currentLevel);
+      }
+      return;
+    }
+
+    const fallbackName =
+      session.user.email?.split("@")[0] ||
+      "Player";
+
+    const { data, error } = await supabase
+      .from("score")
+      .insert({
+        level: currentLevel,
+        name: fallbackName,
+        userId: session.user.id
+      })
+      .select("id,level")
+      .single();
+
+    if (!error && data) {
+      setScoreRecordId(data.id);
+      setScoreRecordLevel(data.level);
+      setScoreLookupDone(true);
+    }
   };
 
   const updateExistingScore = async (currentLevel) => {
@@ -588,5 +629,4 @@ export default function App() {
     </main>
   );
 }
-
 
