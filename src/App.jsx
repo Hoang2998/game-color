@@ -261,24 +261,7 @@ export default function App() {
     setAuthBusy(false);
   };
 
-  const handleLogout = async () => {
-    if (!supabase || !session?.user?.id) {
-      return;
-    }
-
-    await saveProgressOnLogout();
-    await supabase.auth.signOut();
-    handleReset();
-    setAuthMessage("");
-    setScoreRecordId(null);
-    setScoreRecordLevel(null);
-    setScoreLookupDone(false);
-    setRankingOpen(false);
-    setRankingRows([]);
-    setRankingMessage("");
-  };
-
-  const saveProgressOnLogout = async () => {
+  const saveCurrentProgress = async () => {
     if (!supabase || !session?.user?.id) {
       return;
     }
@@ -316,6 +299,29 @@ export default function App() {
       setScoreRecordLevel(data.level);
       setScoreLookupDone(true);
     }
+  };
+
+  const handleEnd = async () => {
+    await saveCurrentProgress();
+    handleReset();
+    setMessage("Progress saved. Back to level 1.");
+  };
+
+  const handleLogout = async () => {
+    if (!supabase || !session?.user?.id) {
+      return;
+    }
+
+    await saveCurrentProgress();
+    await supabase.auth.signOut();
+    handleReset();
+    setAuthMessage("");
+    setScoreRecordId(null);
+    setScoreRecordLevel(null);
+    setScoreLookupDone(false);
+    setRankingOpen(false);
+    setRankingRows([]);
+    setRankingMessage("");
   };
 
   const updateExistingScore = async (currentLevel) => {
@@ -511,6 +517,7 @@ export default function App() {
             <button type="button" className="start-btn" onClick={handleStart}>Start</button>
             <button type="button" className="reset-btn" onClick={handleReset}>Reset</button>
             <button type="button" className="next-btn" onClick={handleNext} disabled={!canNext}>Next</button>
+            <button type="button" className="end-btn" onClick={handleEnd}>End</button>
           </div>
         </div>
         <p className="status">{message}</p>
@@ -629,4 +636,3 @@ export default function App() {
     </main>
   );
 }
-
