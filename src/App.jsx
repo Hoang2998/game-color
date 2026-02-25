@@ -281,15 +281,43 @@ export default function App() {
     }
 
     const currentLevel = level;
+    let existingId = scoreRecordId;
+    let existingLevel = scoreRecordLevel;
 
-    if (scoreRecordId) {
+    if (!existingId) {
+      const { data, error } = await supabase
+        .from("score")
+        .select("id,level")
+        .eq("userId", session.user.id)
+        .maybeSingle();
+
+      if (error) {
+        setScoreMessage(`Failed to check existing score: ${error.message}`);
+        return;
+      }
+
+      if (data) {
+        existingId = data.id;
+        existingLevel = data.level;
+        setScoreRecordId(data.id);
+        setScoreRecordLevel(data.level);
+        setScoreLookupDone(true);
+      }
+    }
+
+    if (existingId) {
+      if (existingLevel !== null && currentLevel <= existingLevel) {
+        return;
+      }
+
       const { error } = await supabase
         .from("score")
         .update({ level: currentLevel })
-        .eq("id", scoreRecordId);
+        .eq("id", existingId);
 
       if (!error) {
         setScoreRecordLevel(currentLevel);
+        setScoreLookupDone(true);
       }
       return;
     }
@@ -343,9 +371,9 @@ export default function App() {
       return;
     }
 
-    if (scoreRecordLevel !== null && currentLevel < scoreRecordLevel) {
+    if (scoreRecordLevel !== null && currentLevel <= scoreRecordLevel) {
       setScoreSubmitted(true);
-      setScoreMessage(`No update: current level ${currentLevel} is lower than saved level ${scoreRecordLevel}.`);
+      setScoreMessage(`No update: current level ${currentLevel} is not higher than saved level ${scoreRecordLevel}.`);
       return;
     }
 
