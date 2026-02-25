@@ -280,40 +280,32 @@ export default function App() {
       return;
     }
 
-    const currentLevel = level;
-    let existingId = scoreRecordId;
-    let existingLevel = scoreRecordLevel;
+    const currentLevel = Number(level);
+    const { data: existingRow, error: lookupError } = await supabase
+      .from("score")
+      .select("id,level")
+      .eq("userId", session.user.id)
+      .maybeSingle();
 
-    if (!existingId) {
-      const { data, error } = await supabase
-        .from("score")
-        .select("id,level")
-        .eq("userId", session.user.id)
-        .maybeSingle();
-
-      if (error) {
-        setScoreMessage(`Failed to check existing score: ${error.message}`);
-        return;
-      }
-
-      if (data) {
-        existingId = data.id;
-        existingLevel = data.level;
-        setScoreRecordId(data.id);
-        setScoreRecordLevel(data.level);
-        setScoreLookupDone(true);
-      }
+    if (lookupError) {
+      setScoreMessage(`Failed to check existing score: ${lookupError.message}`);
+      return;
     }
 
-    if (existingId) {
-      if (existingLevel !== null && currentLevel <= existingLevel) {
+    if (existingRow) {
+      const savedLevel = Number(existingRow.level ?? 0);
+      setScoreRecordId(existingRow.id);
+      setScoreRecordLevel(savedLevel);
+      setScoreLookupDone(true);
+
+      if (currentLevel <= savedLevel) {
         return;
       }
 
       const { error } = await supabase
         .from("score")
         .update({ level: currentLevel })
-        .eq("id", existingId);
+        .eq("id", existingRow.id);
 
       if (!error) {
         setScoreRecordLevel(currentLevel);
