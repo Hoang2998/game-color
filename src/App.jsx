@@ -530,7 +530,6 @@ export default function App() {
           <div className="game-actions">
             <button type="button" className="start-btn" onClick={handleStart}>Start</button>
             <button type="button" className="reset-btn" onClick={handleReset}>Reset</button>
-            <button type="button" className="next-btn" onClick={handleNext} disabled={!canNext}>Next</button>
             <button type="button" className="end-btn" onClick={handleEnd}>End</button>
           </div>
         </div>
@@ -566,7 +565,7 @@ export default function App() {
         ))}
       </section>
 
-      <section className="part part-4" aria-label="One row with 4 color buttons">
+      <section className="part part-4-colors" aria-label="Color buttons">
         <div className="rect-row">
           {PALETTE.map((color) => (
             <button
@@ -579,6 +578,9 @@ export default function App() {
             />
           ))}
         </div>
+      </section>
+
+      <section className="part part-4-controls" aria-label="Control buttons">
         <div className="check-actions">
           <button
             type="button"
@@ -595,6 +597,14 @@ export default function App() {
             disabled={!started || gameOver || canNext}
           >
             Check
+          </button>
+          <button
+            type="button"
+            className="next-btn"
+            onClick={handleNext}
+            disabled={!canNext}
+          >
+            Next
           </button>
         </div>
       </section>

@@ -235,7 +235,7 @@ button:disabled {
   background: linear-gradient(135deg, #ef4444, #dc2626);
 }
 
-.actions .next-btn {
+.next-btn {
   background: linear-gradient(135deg, #14b8a6, #0f766e);
 }
 
@@ -248,7 +248,7 @@ button:disabled {
 }
 
 .back-btn:not(:disabled) {
-  color: #fcfcfc;
+  color: #0f172a;
 }
 
 .logout-btn {
@@ -292,6 +292,27 @@ button:disabled {
 
   .game-actions button {
     flex: 1 1 calc(50% - 8px);
+  }
+
+  .rect-row {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .cell-rect {
+    height: 42px;
+  }
+
+  .check-actions {
+    width: 100%;
+    justify-content: stretch;
+    gap: 8px;
+  }
+
+  .check-actions button {
+    flex: 1 1 0;
+    min-height: 38px;
+    padding-inline: 9px;
   }
 }
 
@@ -519,10 +540,10 @@ button:disabled {
   border: 1px solid #94a3b8;
 }
 
-.part-4 {
+.part-4-colors,
+.part-4-controls {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
   background: #000000;
   border-color: #1f2937;
@@ -532,6 +553,11 @@ button:disabled {
   display: flex;
   align-items: center;
   gap: 8px;
+  width: 100%;
+}
+
+.part-4-controls .check-actions button {
+  flex: 1 1 0;
 }
 
 .rect-row {
@@ -571,5 +597,3 @@ button:disabled {
   color: #ffffff;
   padding-inline: 16px;
 }
-
-
