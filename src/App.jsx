@@ -174,6 +174,20 @@ export default function App() {
     setCurrentCol((prev) => prev + 1);
   };
 
+  const handleBack = () => {
+    if (!started || gameOver || canNext || currentCol <= 0) {
+      return;
+    }
+
+    const targetCol = currentCol - 1;
+    setGuesses((prev) => {
+      const next = prev.map((row) => [...row]);
+      next[currentRow][targetCol] = null;
+      return next;
+    });
+    setCurrentCol(targetCol);
+  };
+
   const handleCheck = () => {
     if (!started || gameOver || canNext) {
       return;
@@ -565,14 +579,24 @@ export default function App() {
             />
           ))}
         </div>
-        <button
-          type="button"
-          className="check-btn"
-          onClick={handleCheck}
-          disabled={!started || gameOver || canNext}
-        >
-          Check
-        </button>
+        <div className="check-actions">
+          <button
+            type="button"
+            className="back-btn"
+            onClick={handleBack}
+            disabled={!started || gameOver || canNext || currentCol <= 0}
+          >
+            Back
+          </button>
+          <button
+            type="button"
+            className="check-btn"
+            onClick={handleCheck}
+            disabled={!started || gameOver || canNext}
+          >
+            Check
+          </button>
+        </div>
       </section>
 
       {gameOver && scoreLookupDone && !scoreRecordId && !scoreSubmitted ? (
